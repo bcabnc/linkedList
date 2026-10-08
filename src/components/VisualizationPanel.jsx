@@ -63,7 +63,8 @@ export const VisualizationPanel = ({
       flexDirection: 'column',
       gap: '12px',
       height: '100%',
-      minHeight: '380px',
+      minHeight: 0,
+      minWidth: 0,
       position: 'relative',
       overflow: 'hidden'
     }}>
@@ -132,9 +133,9 @@ export const VisualizationPanel = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: nodes.length <= 4 ? 'center' : 'flex-start',
-          padding: '30px 16px 60px 16px',
+          padding: '16px 14px 20px 14px',
           overflowX: 'auto',
-          minHeight: '260px',
+          minHeight: '160px',
           position: 'relative'
         }}
       >

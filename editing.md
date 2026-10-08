@@ -10,43 +10,38 @@ A state-of-the-art interactive educational web application specifically tailored
 Concept -> Data Structure Diagram -> Algorithm -> C Source Code (Full Code) -> Line-by-Line Execution -> Visual Animation -> Simulated Memory State.
 
 ### Current Status
-Version 1.3 complete. Resolved the hardcoded base list issue so user-specified initial nodes (`baseListValues`) dynamically propagate to all list operations and algorithms. Overhauled the entire UI to be mobile-first responsive with an off-canvas drawer sidebar, a touch-scroll navigation bar, a mobile view mode switcher (`[Visual Canvas] | [C Code] | [Both]`), and an interactive Base List modal with presets, random generator, and live chain preview. Running live on `http://localhost:5173/`.
+Version 1.5 complete. Diagnosed and resolved layout blowout and overlap bug shown on live Vercel deployment where `ExplanationPanel` was overlapping directly on top of the visualizer canvas and code editor. Converted grid containers to robust `min-height: 0; min-width: 0; overflow: hidden;` layouts, responsive height clamping `clamp(280px, 44vh, 420px)`, solid sticky Executive Command Toolbar (`ControlsPanel`), and eliminated outer page hijacking by transitioning `scrollIntoView()` in `CodePanel` to targeted container-level `container.scrollTo()`. Clean production build passing and ready to push to remote `https://github.com/bcabnc/linkedList.git`.
 
 ### Technology
 - Frontend: React 19, Vite 8, Vanilla CSS Design System with CSS Custom Properties
 - Icons: 100% Crisp inline SVG icons (Zero representative emoji rule strictly enforced)
 - Execution Engine: Data-driven state machine generating discrete execution steps in pure C
 - Code Engine: Complete, compilable ANSI C / C99 code for all linked list operations
+- Remote Repository: `https://github.com/bcabnc/linkedList.git` (branch `main`)
 
 ### Completed Features
-- **Dynamic Base List (Hardcoded Issue Fixed)**:
-  - Replaced the hardcoded `[10, 20, 30, 40]` parameters array in `App.jsx` with dynamic state `baseListValues`.
-  - Added dedicated interactive Base List modal in `ControlsPanel.jsx`:
-    - Live visual chain preview showing current nodes and pointer termination.
-    - Comma-separated input for custom node numbers.
-    - Quick presets (`[10, 20, 30]`, `[10..40]`, `[5..45]`, `[100, 200]`, `[7] Single Node`).
-    - Random 4-node generator with `ShuffleIcon`.
-    - Append individual node input (`+ Append`).
-    - "Set Starting List" button: instantly updates base list for all operations (`insert`, `delete`, `search`, `reverse`).
-    - "Animate Create List" button: runs step-by-step C creation algorithm for the custom list.
-- **Mobile-First Responsive Overhaul**:
-  - **Header**: Responsive compact brand title, horizontally scrolling tab bar (`.nav-scroll-bar`), and compact icon actions on mobile screens (`hide-on-mobile`).
-  - **Sidebar**: Mobile off-canvas drawer (`.app-sidebar-container`) with backdrop overlay (`.sidebar-backdrop`) on screens `<= 768px`; automatically closes on item tap.
-  - **Workspace Split**: Added segmented mobile view bar (`[Canvas] | [C Code] | [Both]`) for screens `<= 900px`, avoiding cramped split columns on phones while preserving side-by-side view on desktops.
-  - **Touch Scrolling**: Added `.touch-scroll` with smooth momentum touch scrolling to canvas, code editor, and memory tables.
-  - **Panels**: Reduced padding (`16px 12px`) on Comparison, Complexity, and Practice panels to eliminate mobile horizontal overflow.
-- **Sleek Command Bar Redesign**:
-  - High-density Executive Control Bar with dynamic inline inputs for `Val` and `Pos`, playback controls, and speed pills.
-- **Side-by-Side Hero Focus for Visualization & Code**:
-  - Synchronized heights (`420px`, `minHeight: 390px`) and smooth auto-scroll to the currently active C code line.
-- **Start from Beginning (Step 1 Pristine Initial State)**:
-  - 100% of operations start at Step 1: Pristine Initial State showing unmutated list and highlighted function entry signature.
+- **Grid Overflow Blowout & Overlap Fix (Version 1.5)**:
+  - Root cause identified: `.workspace-grid` had a fixed height without `overflow: hidden`, while child grid items defaulted to `min-height: min-content`, causing `VisualizationPanel` and `CodePanel` to blow out to 861px height.
+  - As a result, `ExplanationPanel` (positioned below the 420px grid) was rendered right on top of the protruding bottom 441px of the visualizer and code editor.
+  - Added `min-height: 0; min-width: 0; overflow: hidden;` across `.workspace-grid` and `.panel-mobile-full`.
+  - Added `minHeight: 0; minWidth: 0;` to both `VisualizationPanel` and `CodePanel`.
+  - Updated grid height to fluid responsive `clamp(280px, 44vh, 420px)` and reduced canvas padding from 60px to 20px so nodes fit comfortably on laptop viewports.
+- **Scroll Hijacking Elimination in CodePanel**:
+  - Replaced native `scrollIntoView({ block: 'nearest' })` with local ref `codeEditorRef.current.scrollTo(...)`.
+  - Prevents browser from scrolling parent `<main>` container or window when highlighting lines during step execution.
+- **Solid Sticky Executive Command Toolbar**:
+  - Styled `ControlsPanel` with `position: sticky; top: 0; zIndex: 30; background: var(--bg-secondary); border: 1px solid var(--border-color); flexShrink: 0;`.
+  - Toolbar remains accessible while scrolling into explanations and memory layout with zero bleed-through artifacts.
+- **Modal Viewport Portal Mounting**:
+  - Base List Modal portaled directly to `document.body` with `z-index: 9999`.
+- **Pure ANSI C Compilable Source Code**:
+  - Full C code for all 28 operations across Singly, Circular, and Doubly Linked Lists.
 
 ### In Progress
-- Version 1.3 stable and verified.
+- Pushing Version 1.5 to GitHub repository.
 
 ### Known Issues
-- Playwright headless browser binary download failed due to network 404 on Azure Edge CDN; verified programmatically via Node.js harness and local HTTP 200 checks.
+- Playwright headless browser binary download failed due to network 404 on Azure Edge CDN; verified layout programmatically via Microsoft Edge CDP automated harness.
 
 ### Important Constraints
 - Strictly NO representative emojis anywhere in the UI or codebase (SVG icons only).
@@ -55,9 +50,165 @@ Version 1.3 complete. Resolved the hardcoded base list issue so user-specified i
 - Every operation must begin at Step 1: Pristine Initial State.
 
 ### Recommended Next Step
-Demonstrate dynamic base list configuration and mobile responsiveness to the user.
+Commit and push Version 1.5 to remote `https://github.com/bcabnc/linkedList.git` and verify Vercel deployment.
 
 ---
+
+## Development History
+
+## 2026-10-08 — Version 1.5: Grid Overflow Blowout & Overlap Fix, Local Code Scrolling
+
+### User Request
+User provided live screenshot of `https://linked-list-umber.vercel.app` showing `Execution Step Analysis` overlapping on top of the visualizer canvas nodes and C code editor.
+
+### Work Completed
+- Layout blowout investigation via Microsoft Edge CDP automated protocol:
+  - Discovered `vis` and `code` expanded to 861px height due to CSS Grid default `min-height: min-content`, while `.workspace-grid` had height 420px without overflow protection.
+  - Measured `exp` starting at top: 624px while `vis`/`code` extended to 1083px, creating physical overlap of 441px.
+- Implemented CSS Grid & Flex containment:
+  - Added `min-height: 0; min-width: 0; overflow: hidden;` to `.workspace-grid .panel-mobile-full`.
+  - Changed `height: 420px` to responsive `height: clamp(280px, 44vh, 420px); min-height: 260px;`.
+  - Updated `VisualizationPanel` and `CodePanel` to `minHeight: 0; minWidth: 0;`.
+  - Reduced excess canvas vertical padding in `VisualizationPanel` from `30px 16px 60px 16px` to `16px 14px 20px 14px`.
+- Replaced `scrollIntoView()` in `CodePanel`:
+  - Replaced native `scrollIntoView()` with local `codeEditorRef.current.scrollTo(...)`.
+  - Completely eliminated parent container jump/scrolling on step navigation.
+- Enhanced `ControlsPanel`:
+  - Added `position: sticky; top: 0; zIndex: 30; background: var(--bg-secondary); flexShrink: 0;` so it remains pinned and cleanly opaque.
+- Verified:
+  - Edge CDP layout analysis confirmed `vis` and `code` bottom at 502px, and `exp` starting cleanly at 514px (12px gap, 0px overlap).
+  - Production build passed in 620ms with 0 errors.
+
+### Files Created
+None.
+
+### Files Modified
+- `src/index.css`
+- `src/App.jsx`
+- `src/components/VisualizationPanel.jsx`
+- `src/components/CodePanel.jsx`
+- `src/components/ControlsPanel.jsx`
+- `src/components/ExplanationPanel.jsx`
+- `editing.md`
+
+### Files Deleted
+None.
+
+### Technical Decisions
+- Used `container.scrollTo()` instead of `scrollIntoView()` to scope scrolling strictly to the code pane.
+- Applied CSS Grid `min-height: 0` containment to prevent child content from overriding grid track heights.
+- Made `ControlsPanel` sticky with an opaque background to maintain instant playback control access.
+
+### Architecture Changes
+- Strict vertical ordering with explicit grid containment prevents any sibling overlap.
+
+### Dependencies
+None added.
+
+### Testing
+- Microsoft Edge CDP headless run validated 0px overlap in both initial and scrolled states.
+- `npm run build` completed successfully in 620ms.
+
+### Bugs Fixed
+- Fixed `ExplanationPanel` overlapping visualizer nodes and C code editor.
+- Fixed `scrollIntoView()` in `CodePanel` hijacking the main viewport scroll.
+
+### Known Issues
+None.
+
+### Failed Approaches
+None.
+
+### User Decisions
+- User requested clean visualizer and code visibility with zero overlap.
+
+### Pending Work
+- [x] Fix grid blowout and ExplanationPanel overlap
+- [x] Fix scrollIntoView hijacking in CodePanel
+- [x] Make ControlsPanel sticky with solid background
+- [x] Verify layout programmatically
+- [x] Update editing.md
+- [ ] Commit and push to https://github.com/bcabnc/linkedList.git
+
+### Recommended Next Step
+Push changes to GitHub origin main.
+
+---
+
+## 2026-10-08 — Version 1.4: Modal Viewport Portal Fix & GitHub Repository Deployment
+
+### User Request
+1. "now working, and isko fix kar ke https://github.com/bcabnc/linkedList.git gitpush kar do" (Now working, fix the UI issues from the screenshot and push to the GitHub repository).
+
+### Work Completed
+- Fixed Base List Modal clipping bug:
+  - Identified root cause: parent `.glass-panel` uses `backdrop-filter: blur()`, creating a CSS containing block that isolated `position: fixed` elements and caused the top of the modal to be cut off outside the viewport.
+  - Wrapped modal in `createPortal(..., document.body)` so it renders at the root `<body>` level with `z-index: 9999` and perfect viewport centering.
+  - Updated "Set Starting List" and "Animate Create List" handlers to close the modal immediately upon click, avoiding any visual lag or stuck overlays.
+- Cleaned up layout:
+  - Removed duplicate `[ Show Sidebar ]` button from `App.jsx`, retaining the primary, persistent toggle in the Header.
+- Git & GitHub Deployment:
+  - Initialized Git repository in `c:\Users\DELL\Desktop\DSA\web`.
+  - Added remote origin `https://github.com/bcabnc/linkedList.git`.
+  - Created root commit: `Initial commit: Interactive Linked List Visualizer and C Code Execution Lab (BCA Semester V)`.
+  - Pushed to `origin/main` successfully with tracking branch set.
+- Tested:
+  - Production build `npm run build` completed in 493ms with 0 errors.
+  - Dev server HTTP 200 verified.
+  - `git status` confirmed clean working tree on `main` branch.
+
+### Files Created
+None.
+
+### Files Modified
+- `src/components/ControlsPanel.jsx`
+- `src/App.jsx`
+- `src/index.css`
+- `editing.md`
+
+### Files Deleted
+None.
+
+### Technical Decisions
+- Used `createPortal` to mount modal to `document.body`, guaranteeing immune isolation from any CSS filters, transforms, or overflow constraints on ancestor containers.
+- Retained a single header-level sidebar toggle button to prevent awkward dual-button stacking.
+
+### Architecture Changes
+- Base list modal is portaled directly into the document root.
+
+### Dependencies
+None added.
+
+### Testing
+- `npm run build` passed with code 0 (34 modules transformed, 493ms).
+- Dev server tested with `fetch('http://localhost:5173')` returning HTTP 200.
+- `git push -u origin main` completed with status 0.
+
+### Bugs Fixed
+- Fixed modal top clipping caused by CSS `backdrop-filter` containing block trap.
+- Fixed duplicate "Show Sidebar" button appearing beneath the header.
+
+### Known Issues
+None.
+
+### Failed Approaches
+None.
+
+### User Decisions
+- User requested push to remote GitHub repository `https://github.com/bcabnc/linkedList.git`.
+
+### Pending Work
+- [x] Fix modal clipping via React Portal
+- [x] Remove duplicate Show Sidebar button
+- [x] Test production build
+- [x] Commit and push to https://github.com/bcabnc/linkedList.git
+- [x] Update editing.md
+
+### Recommended Next Step
+Inform user of successful push and verified UI fixes.
+
+---
+
 
 ## Development History
 

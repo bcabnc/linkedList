@@ -9,25 +9,35 @@ export const CodePanel = ({
 }) => {
   const [selectedLanguage, setSelectedLanguage] = useState('c');
   const activeLineRef = useRef(null);
+  const codeEditorRef = useRef(null);
 
   useEffect(() => {
-    if (activeLineRef.current) {
-      activeLineRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest'
-      });
+    if (activeLineRef.current && codeEditorRef.current) {
+      const container = codeEditorRef.current;
+      const target = activeLineRef.current;
+      const targetTop = target.offsetTop;
+      const containerTop = container.scrollTop;
+      const containerHeight = container.clientHeight;
+
+      // Scroll only inside the code editor container, avoiding outer page jump
+      if (targetTop < containerTop + 20 || targetTop > containerTop + containerHeight - 40) {
+        container.scrollTo({
+          top: Math.max(0, targetTop - Math.floor(containerHeight / 3)),
+          behavior: 'smooth'
+        });
+      }
     }
   }, [activeLine]);
 
   const lines = codeSnippet.split('\n');
-
 
   return (
     <div className="glass-panel" style={{
       display: 'flex',
       flexDirection: 'column',
       height: '100%',
-      minHeight: '360px',
+      minHeight: 0,
+      minWidth: 0,
       overflow: 'hidden'
     }}>
       {/* Top Header of Code Editor */}
@@ -83,10 +93,12 @@ export const CodePanel = ({
 
       {/* Code Editor Window (Touch scrollable) */}
       <div
+        ref={codeEditorRef}
         className="touch-scroll"
         style={{
           background: 'var(--code-bg)',
           flex: 1,
+          minHeight: 0,
           overflowY: 'auto',
           overflowX: 'auto',
           padding: '12px 0',

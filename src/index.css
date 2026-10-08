@@ -341,18 +341,31 @@ input:focus, select:focus {
 .workspace-grid {
   display: grid;
   gap: 12px;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
   transition: all 0.25s ease;
+}
+
+.workspace-grid .panel-mobile-full {
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 @media (min-width: 901px) {
   .workspace-grid.desktop-side-by-side {
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-    height: 420px;
-    min-height: 390px;
+    height: clamp(280px, 44vh, 420px);
+    min-height: 260px;
   }
   .workspace-grid.single-column {
     grid-template-columns: 1fr;
-    height: 420px;
+    height: clamp(280px, 44vh, 420px);
+    min-height: 260px;
   }
 }
 

@@ -19,7 +19,8 @@ export const ExplanationPanel = ({
       padding: '16px 20px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '14px'
+      gap: '14px',
+      flexShrink: 0
     }}>
       {/* Top Header with Tab Switcher */}
       <div style={{

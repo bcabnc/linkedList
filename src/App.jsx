@@ -381,7 +381,7 @@ export function App() {
             </div>
 
             {/* Middle: Split Layout (Visualization Center + Code Panel Right side-by-side or mobile toggle) */}
-            <div className={`workspace-grid ${teacherMode && hideCode ? 'single-column' : 'desktop-side-by-side'}`}>
+            <div className={`workspace-grid ${teacherMode && hideCode ? 'single-column' : 'desktop-side-by-side'}`} style={{ flexShrink: 0 }}>
               {/* Center Panel: Linked List Animation */}
               {(mobileViewMode === 'visualizer' || mobileViewMode === 'both') && (
                 <div className="panel-mobile-full" style={{ height: '100%' }}>

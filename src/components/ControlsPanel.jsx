@@ -124,8 +124,13 @@ export const ControlsPanel = ({
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: '10px',
-        position: 'relative',
-        zIndex: 20
+        position: 'sticky',
+        top: 0,
+        zIndex: 30,
+        flexShrink: 0,
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border-color)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)'
       }}
     >
       {/* SECTION 1: Operation Selector & Dynamic Parameters */}
