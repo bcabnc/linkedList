@@ -10,6 +10,7 @@ import { ComplexityPanel } from './components/ComplexityPanel';
 import { PracticePanel } from './components/PracticePanel';
 import { ConceptGuideModal } from './components/ConceptGuideModal';
 import { TeacherModeBanner } from './components/TeacherModeBanner';
+import { Footer } from './components/Footer';
 import { PanelLeftOpenIcon, SmartphoneIcon, ColumnsIcon, CodeIcon } from './components/icons/Icons';
 
 import {
@@ -423,30 +424,43 @@ export function App() {
                 showMemoryAddresses={showMemoryAddresses}
               />
             )}
+
+            {/* Application Footer with Developer Credit */}
+            <Footer />
           </main>
         </div>
       )}
 
       {/* Comparison Matrix Tab */}
       {activeTab === 'comparison' && (
-        <main style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
-          <ComparisonPanel onSelectType={(type) => { setSelectedListType(type); setActiveTab('visualizer'); }} />
+        <main style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1 }}>
+            <ComparisonPanel onSelectType={(type) => { setSelectedListType(type); setActiveTab('visualizer'); }} />
+          </div>
+          <Footer />
         </main>
       )}
 
       {/* Complexity Matrix Tab */}
       {activeTab === 'complexity' && (
-        <main style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
-          <ComplexityPanel />
+        <main style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1 }}>
+            <ComplexityPanel />
+          </div>
+          <Footer />
         </main>
       )}
 
       {/* Practice Quiz Tab */}
       {activeTab === 'practice' && (
-        <main style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
-          <PracticePanel />
+        <main style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1 }}>
+            <PracticePanel />
+          </div>
+          <Footer />
         </main>
       )}
+
 
       {/* Interactive Concept Guide Modal */}
       <ConceptGuideModal

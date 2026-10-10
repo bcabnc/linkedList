@@ -1,6 +1,6 @@
 import React from 'react';
 import { SYLLABUS_MODULES } from '../data/syllabusModules';
-import { LayersIcon, CheckIcon, PanelLeftCloseIcon } from './icons/Icons';
+import { LayersIcon, CheckIcon, PanelLeftCloseIcon, ExternalLinkIcon, CodeIcon } from './icons/Icons';
 
 export const Sidebar = ({
   selectedListType,
@@ -246,7 +246,34 @@ export const Sidebar = ({
           ))}
         </div>
       </div>
+
+      {/* Developer Credit Footer */}
+      <div style={{
+        marginTop: 'auto',
+        paddingTop: '12px',
+        borderTop: '1px solid var(--border-color)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        fontSize: '0.72rem',
+        color: 'var(--text-muted)'
+      }}>
+        <span>Developed by</span>
+        <a
+          href="https://atulsah.in"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="developer-link"
+          style={{ fontSize: '0.72rem', padding: '3px 8px' }}
+          title="Visit Atul Sah (https://atulsah.in)"
+        >
+          <CodeIcon size={12} />
+          <span>Atul Sah</span>
+          <ExternalLinkIcon size={10} />
+        </a>
+      </div>
     </aside>
+
   </>
   );
 };

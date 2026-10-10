@@ -10,7 +10,7 @@ A state-of-the-art interactive educational web application specifically tailored
 Concept -> Data Structure Diagram -> Algorithm -> C Source Code (Full Code) -> Line-by-Line Execution -> Visual Animation -> Simulated Memory State.
 
 ### Current Status
-Version 1.5 complete. Diagnosed and resolved layout blowout and overlap bug shown on live Vercel deployment where `ExplanationPanel` was overlapping directly on top of the visualizer canvas and code editor. Converted grid containers to robust `min-height: 0; min-width: 0; overflow: hidden;` layouts, responsive height clamping `clamp(280px, 44vh, 420px)`, solid sticky Executive Command Toolbar (`ControlsPanel`), and eliminated outer page hijacking by transitioning `scrollIntoView()` in `CodePanel` to targeted container-level `container.scrollTo()`. Clean production build passing and ready to push to remote `https://github.com/bcabnc/linkedList.git`.
+Version 1.6 complete. Added dedicated, aesthetically refined Footer component featuring "Developed by Atul Sah" with interactive link to `https://atulsah.in`, course branding "BCA Semester V · Data Structures & Algorithms Visual Lab", and SVG icons. Integrated seamlessly across all main view tabs (`visualizer`, `comparison`, `complexity`, `practice`) and appended a matching footer credit to `Sidebar.jsx`. Verified with Microsoft Edge CDP in both Dark and Light themes. Production build passing in 211ms.
 
 ### Technology
 - Frontend: React 19, Vite 8, Vanilla CSS Design System with CSS Custom Properties
@@ -20,6 +20,13 @@ Version 1.5 complete. Diagnosed and resolved layout blowout and overlap bug show
 - Remote Repository: `https://github.com/bcabnc/linkedList.git` (branch `main`)
 
 ### Completed Features
+- **Developer Attribution Footer (Version 1.6)**:
+  - Created standalone semantic `<Footer>` component in `src/components/Footer.jsx`.
+  - Prominently showcases "Developed by" with interactive pill link to `https://atulsah.in` (`Atul Sah` with SVG `CodeIcon` and `ExternalLinkIcon`).
+  - Added syllabus lab badge: `BCA Semester V • Data Structures & Algorithms Visual Lab` with `GraduationCapIcon`.
+  - Integrated into all tabs (`visualizer`, `comparison`, `complexity`, `practice`) at the base of scrollable views.
+  - Added matching sidebar footer credit at the bottom of the off-canvas/drawer `Sidebar.jsx`.
+  - Styled with theme-aware tokens (`var(--bg-secondary)`, `var(--border-color)`, `var(--text-secondary)`, `var(--accent-primary)`) supporting both Dark and Light modes.
 - **Grid Overflow Blowout & Overlap Fix (Version 1.5)**:
   - Root cause identified: `.workspace-grid` had a fixed height without `overflow: hidden`, while child grid items defaulted to `min-height: min-content`, causing `VisualizationPanel` and `CodePanel` to blow out to 861px height.
   - As a result, `ExplanationPanel` (positioned below the 420px grid) was rendered right on top of the protruding bottom 441px of the visualizer and code editor.
@@ -38,7 +45,7 @@ Version 1.5 complete. Diagnosed and resolved layout blowout and overlap bug show
   - Full C code for all 28 operations across Singly, Circular, and Doubly Linked Lists.
 
 ### In Progress
-- Pushing Version 1.5 to GitHub repository.
+- None.
 
 ### Known Issues
 - Playwright headless browser binary download failed due to network 404 on Azure Edge CDN; verified layout programmatically via Microsoft Edge CDP automated harness.
@@ -50,13 +57,94 @@ Version 1.5 complete. Diagnosed and resolved layout blowout and overlap bug show
 - Every operation must begin at Step 1: Pristine Initial State.
 
 ### Recommended Next Step
-Commit and push Version 1.5 to remote `https://github.com/bcabnc/linkedList.git` and verify Vercel deployment.
+Push Version 1.6 updates to remote `https://github.com/bcabnc/linkedList.git`.
 
 ---
 
 ## Development History
 
+## 2026-10-10 — Version 1.6: Developer Footer Attribution (Atul Sah)
+
+### User Request
+"footer me Developed by Atul Sah (https://atulsah.in) add karo"
+
+### Work Completed
+- Created `src/components/Footer.jsx`:
+  - Contains semantic `<footer>` element with `id="app-footer"` and `role="contentinfo"`.
+  - Left section: Syllabus badge `BCA Semester V • Data Structures & Algorithms Visual Lab` with inline SVG `GraduationCapIcon`.
+  - Right section: "Developed by" label and stylized interactive button link (`.developer-link`) directing to `https://atulsah.in` (`target="_blank"`, `rel="noopener noreferrer"`) with `CodeIcon` and `ExternalLinkIcon`.
+- Added CSS rules in `src/index.css`:
+  - `.app-footer` container with `border`, `border-radius`, `box-shadow`, flex wrap, and theme-adaptive colors.
+  - `.developer-link` with glassmorphic hover state, accent glow, translateY micro-animation, and active state.
+  - Mobile responsive stacked layout (`@media (max-width: 640px)`).
+- Updated `src/App.jsx`:
+  - Imported `Footer` and added it inside all four tab views (`visualizer`, `comparison`, `complexity`, and `practice`) below the main content.
+- Updated `src/components/Sidebar.jsx`:
+  - Added subtle credit at the base of the sidebar menu: "Developed by Atul Sah" with link to `https://atulsah.in`.
+- Updated `src/components/icons/Icons.jsx`:
+  - Added SVG `GlobeIcon` and `HeartIcon` inline vectors.
+- Testing & Verification:
+  - Verified compilation with `npm run build` (35 modules transformed, 0 errors, 211ms).
+  - Programmatically validated DOM via Microsoft Edge CDP automated harness: confirmed `.app-footer`, `#developer-profile-link`, and `aside .developer-link` resolve to `https://atulsah.in/`.
+  - Captured high-resolution screenshots in both Dark Mode (`footer_verified.png`) and Light Mode (`footer_light_verified.png`).
+  - Zero emojis used (100% SVG icons).
+
+### Files Created
+- `src/components/Footer.jsx`
+
+### Files Modified
+- `src/App.jsx`
+- `src/components/Sidebar.jsx`
+- `src/components/icons/Icons.jsx`
+- `src/index.css`
+- `editing.md`
+
+### Files Deleted
+None.
+
+### Technical Decisions
+- Rendered `<Footer />` inside `<main>` across all tabs so it naturally terminates the scrollable content without stealing vertical viewport height from the visualizer canvas or code editor.
+- Embedded a secondary credit inside `Sidebar.jsx` to maintain attribution visibility on desktops where the sidebar is always pinned.
+- Retained strict compliance with zero representative emoji policy using SVG icons.
+
+### Architecture Changes
+- Global footer component standardized across all tab views.
+
+### Dependencies
+None.
+
+### Testing
+- `npm run build`: Success in 211ms.
+- Vite dev server running at `http://localhost:5173/`: HTTP 200 OK.
+- Microsoft Edge CDP DOM evaluation: Verified element attributes and links.
+- High-resolution visual screenshots captured for Dark and Light themes.
+
+### Bugs Fixed
+None.
+
+### Known Issues
+None.
+
+### Failed Approaches
+None.
+
+### User Decisions
+- User requested adding "Developed by Atul Sah (https://atulsah.in)" to the footer.
+
+### Pending Work
+- [x] Create Footer component
+- [x] Style footer and link with animations
+- [x] Add to App.jsx tabs and Sidebar
+- [x] Verify build and CDP screenshots in dark/light mode
+- [x] Update editing.md
+
+### Recommended Next Step
+Commit and push changes to GitHub remote repository.
+
+---
+
 ## 2026-10-08 — Version 1.5: Grid Overflow Blowout & Overlap Fix, Local Code Scrolling
+
 
 ### User Request
 User provided live screenshot of `https://linked-list-umber.vercel.app` showing `Execution Step Analysis` overlapping on top of the visualizer canvas nodes and C code editor.
